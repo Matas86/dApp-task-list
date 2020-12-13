@@ -10,13 +10,20 @@ contract TodoList {
     }
     
     mapping (uint => Task) public tasks;
+
+    event TaskCreated(
+        uint id,
+        string content,
+        bool completed
+    );
     
     constructor() public {
-        createTask("Pirmasis darbas paleidus programa");
+        createTask("First task that is auto");
     }
     
-    function createTask(string memory _contect) public {
+    function createTask(string memory _content) public {
         taskCount ++;
-        tasks[taskCount] = Task(taskCount, _contect, false);
+        tasks[taskCount] = Task(taskCount, _content, false);
+        emit TaskCreated(taskCount, _content, false);
     }
 }
