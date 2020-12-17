@@ -7,6 +7,7 @@ contract TodoList {
         uint id;
         string content;
         bool completed;
+        address creator;
     }
     
     mapping (uint => Task) public tasks;
@@ -14,7 +15,8 @@ contract TodoList {
     event TaskCreated(
         uint id,
         string content,
-        bool completed
+        bool completed,
+        address creator
     );
     
     event TaskCompleted(
@@ -28,14 +30,18 @@ contract TodoList {
     
     function createTask(string memory _content) public {
         taskCount ++;
-        tasks[taskCount] = Task(taskCount, _content, false);
-        emit TaskCreated(taskCount, _content, false);
+        tasks[taskCount] = Task(taskCount, _content, false, msg.sender);
+        emit TaskCreated(taskCount, _content, false, msg.sender);
     }
 
     function toggleCompleted(uint _id) public {
         Task memory _task = tasks[_id];
-        _task.completed = !_task.completed;
-        tasks[_id] = _task;
-        emit TaskCompleted(_id, _task.completed);
+        if(_task.creator != msg.sender)
+        {
+            _task.completed = !_task.completed;
+            tasks[_id] = _task;
+            emit TaskCompleted(_id, _task.completed);
+        }
+        
     }
 }
